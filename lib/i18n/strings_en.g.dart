@@ -930,8 +930,8 @@ class Translations$login$ncLoginStep$en {
 	/// en: 'Server URL'
 	String get serverUrl => 'Server URL';
 
-	/// en: 'Login with Saber'
-	String get loginWithSaber => 'Login with Saber';
+	/// en: 'Login with Notes'
+	String get loginWithSaber => 'Login with Notes';
 
 	/// en: 'Login with Nextcloud'
 	String get loginWithNextcloud => 'Login with Nextcloud';
@@ -950,8 +950,8 @@ class Translations$login$encLoginStep$en {
 	/// en: 'To protect your data, please enter your encryption password:'
 	String get enterEncPassword => 'To protect your data, please enter your encryption password:';
 
-	/// en: 'New to Saber? Just enter a new encryption password.'
-	String get newToSaber => 'New to Saber? Just enter a new encryption password.';
+	/// en: 'New to Notes? Just enter a new encryption password.'
+	String get newToSaber => 'New to Notes? Just enter a new encryption password.';
 
 	/// en: 'Encryption password'
 	String get encPassword => 'Encryption password';
@@ -1586,4 +1586,37 @@ class Translations$editor$menu$bgPatterns$en {
 
 	/// en: 'Cornell'
 	String get cornell => 'Cornell';
+
+	/// en: 'Wide-ruled'
+	String get wideRuled => 'Wide-ruled';
+
+	/// en: 'Narrow-ruled'
+	String get narrowRuled => 'Narrow-ruled';
+
+	/// en: 'Large grid'
+	String get largeGrid => 'Large grid';
+
+	/// en: 'Small grid'
+	String get smallGrid => 'Small grid';
+
+	/// en: 'Large dots'
+	String get largeDots => 'Large dots';
+
+	/// en: 'Small dots'
+	String get smallDots => 'Small dots';
+
+	/// en: 'Isometric dots'
+	String get isometricDots => 'Isometric dots';
+
+	/// en: 'Seyes-ruled'
+	String get seyesRuled => 'Seyes-ruled';
+
+	/// en: 'Cross grid'
+	String get crossGrid => 'Cross grid';
+
+	/// en: 'Dashed lines'
+	String get dashedLines => 'Dashed lines';
+
+	/// en: 'Checklist'
+	String get checklist => 'Checklist';
 }

@@ -1,5 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:saber/components/theming/adaptive_switch_list_tile.dart';
+import 'package:saber/components/settings/settings_row.dart';
 import 'package:saber/components/theming/uni_icon.dart';
 import 'package:saber/pages/home/settings.dart';
 import 'package:stow/stow.dart';
@@ -48,37 +49,62 @@ class _SettingsSwitchState extends State<SettingsSwitch> {
     icon ??= widget.iconBuilder?.call(widget.pref.value);
     icon ??= Icons.settings;
 
-    return GestureDetector(
-      onLongPress: () {
-        SettingsPage.showResetDialog(
-          context: context,
-          pref: widget.pref,
-          prefTitle: widget.title,
-        );
-      },
-      child: AdaptiveSwitchListTile(
-        contentPadding: const .symmetric(vertical: 4, horizontal: 16),
-        secondary: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 100),
-          child: UniIcon(icon, key: ValueKey(icon)),
-        ),
-        title: Text(
-          widget.title,
-          style: TextStyle(
-            fontSize: 18,
-            fontStyle: widget.pref.value != widget.pref.defaultValue
-                ? FontStyle.italic
-                : null,
-          ),
-        ),
-        subtitle: Text(
-          widget.subtitle ?? '',
-          style: const TextStyle(fontSize: 13),
-        ),
-        value: widget.pref.value,
-        onChanged: (bool value) {
-          widget.pref.value = value;
+    final colorScheme = ColorScheme.of(context);
+
+    return SettingsRow(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => widget.pref.value = !widget.pref.value,
+        onLongPress: () {
+          SettingsPage.showResetDialog(
+            context: context,
+            pref: widget.pref,
+            prefTitle: widget.title,
+          );
         },
+        child: Row(
+          children: [
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 100),
+              child: UniIcon(icon, key: ValueKey(icon)),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: .start,
+                mainAxisSize: .min,
+                children: [
+                  Text(
+                    widget.title,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontStyle:
+                          widget.pref.value != widget.pref.defaultValue
+                          ? FontStyle.italic
+                          : null,
+                    ),
+                  ),
+                  if (widget.subtitle != null &&
+                      widget.subtitle!.isNotEmpty)
+                    Text(
+                      widget.subtitle!,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            CupertinoSwitch(
+              value: widget.pref.value,
+              onChanged: (bool value) {
+                widget.pref.value = value;
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

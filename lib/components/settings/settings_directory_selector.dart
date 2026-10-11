@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:saber/components/settings/settings_row.dart';
 import 'package:saber/components/theming/adaptive_alert_dialog.dart';
 import 'package:saber/data/file_manager/file_manager.dart';
 import 'package:saber/data/nextcloud/saber_syncer.dart';
@@ -44,29 +45,36 @@ class SettingsDirectorySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => onPressed(context),
-      child: ListTile(
-        contentPadding: const .symmetric(vertical: 4, horizontal: 16),
-        leading: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 100),
-          child: Icon(icon, key: ValueKey(icon)),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontSize: 18,
-            fontStyle:
-                stows.customDataDir.value != stows.customDataDir.defaultValue
-                ? FontStyle.italic
-                : null,
+    final colorScheme = ColorScheme.of(context);
+    return SettingsRow(
+      child: InkWell(
+        borderRadius: .circular(14),
+        onTap: () => onPressed(context),
+        child: ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 100),
+            child: Icon(icon, key: ValueKey(icon)),
           ),
-        ),
-        subtitle: ValueListenableBuilder(
-          valueListenable: stows.customDataDir,
-          builder: (context, _, _) => Text(
-            FileManager.documentsDirectory,
-            style: const TextStyle(fontSize: 13),
+          title: Text(
+            title,
+            style: TextStyle(
+              fontSize: 15,
+              fontStyle:
+                  stows.customDataDir.value != stows.customDataDir.defaultValue
+                  ? FontStyle.italic
+                  : null,
+            ),
+          ),
+          subtitle: ValueListenableBuilder(
+            valueListenable: stows.customDataDir,
+            builder: (context, _, _) => Text(
+              FileManager.documentsDirectory,
+              style: TextStyle(
+                fontSize: 13,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
           ),
         ),
       ),

@@ -18,11 +18,10 @@ class ColorOption extends StatelessWidget {
   final String? tooltip;
   final Widget child;
 
-  static const double diameter = 25;
+  static const double diameter = 30;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.of(context);
     return Tooltip(
       message: tooltip ?? '',
       child: Padding(
@@ -38,7 +37,7 @@ class ColorOption extends StatelessWidget {
             decoration: BoxDecoration(
               shape: .circle,
               border: Border.all(
-                color: isSelected ? colorScheme.onSurface : Colors.transparent,
+                color: isSelected ? Colors.white : Colors.transparent,
                 width: 2,
               ),
             ),

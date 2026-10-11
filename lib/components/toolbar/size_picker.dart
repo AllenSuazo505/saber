@@ -111,7 +111,7 @@ class _SizeSlider extends StatelessWidget {
             maxSize: pen.sizeMax,
             currentSize: pen.options.size,
             trackColor: colorScheme.onSurface.withValues(alpha: 0.2),
-            thumbColor: colorScheme.primary,
+            thumbColor: const Color(0xFFFF6B35),
           ),
         ),
       ),

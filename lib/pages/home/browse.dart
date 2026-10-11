@@ -13,6 +13,7 @@ import 'package:saber/components/home/masonry_files.dart';
 import 'package:saber/components/home/move_note_button.dart';
 import 'package:saber/components/home/new_note_button.dart';
 import 'package:saber/components/home/no_files.dart';
+import 'package:saber/components/home/note_color_button.dart';
 import 'package:saber/components/home/path_components.dart';
 import 'package:saber/components/home/rename_note_button.dart';
 import 'package:saber/components/home/sort_button.dart';
@@ -136,7 +137,11 @@ class _BrowsePageState extends State<BrowsePage> {
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 t.home.titles.browse,
-                style: TextStyle(color: colorScheme.onSurface),
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                ),
               ),
               centerTitle: false,
               titlePadding: const EdgeInsetsDirectional.only(
@@ -194,7 +199,7 @@ class _BrowsePageState extends State<BrowsePage> {
               minimum: const .only(
                 top: 8,
                 // Allow space for the FloatingActionButton
-                bottom: 70,
+                bottom: 110,
               ),
               sliver: MasonryFiles(
                 crossAxisCount: crossAxisCount,
@@ -208,9 +213,10 @@ class _BrowsePageState extends State<BrowsePage> {
           ],
         ],
       ),
-      floatingActionButton: NewNoteButton(
-        cupertino: platform.isCupertino,
-        path: path,
+      floatingActionButton: Padding(
+        // 16px default Scaffold margin + 6 = 22px right, + 10 = 26px bottom
+        padding: const EdgeInsets.only(right: 6, bottom: 10),
+        child: NewNoteButton(cupertino: platform.isCupertino, path: path),
       ),
       persistentFooterButtons: selectedFiles.value.isEmpty
           ? null
@@ -223,6 +229,13 @@ class _BrowsePageState extends State<BrowsePage> {
                       ? ''
                       : selectedFiles.value.first,
                   unselectNotes: () => selectedFiles.value = [],
+                ),
+              ),
+              Collapsible(
+                axis: CollapsibleAxis.vertical,
+                collapsed: selectedFiles.value.length != 1,
+                child: NoteColorButton(
+                  selectedFiles: selectedFiles.value,
                 ),
               ),
               MoveNoteButton(

@@ -1,4 +1,4 @@
-package com.adilhanney.saber
+package com.goldship.sabernotes
 
 import android.os.Bundle
 import androidx.core.view.ViewCompat

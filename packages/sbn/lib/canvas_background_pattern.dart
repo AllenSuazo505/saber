@@ -38,7 +38,43 @@ enum CanvasBackgroundPattern(
   tablature('tablature'),
 
   /// Cornell notes
-  cornell('cornell');
+  cornell('cornell'),
+
+  /// Horizontal lines with wider spacing than [lined]
+  wideRuled('wide-ruled'),
+
+  /// Horizontal lines with narrower spacing than [lined]
+  narrowRuled('narrow-ruled'),
+
+  /// A grid of larger squares than [grid]
+  largeGrid('large-grid', requiresClipping: true),
+
+  /// A grid of smaller squares than [grid]
+  smallGrid('small-grid', requiresClipping: true),
+
+  /// A grid of dots with wider spacing than [dots]
+  largeDots('large-dots', requiresClipping: true),
+
+  /// A grid of dots with narrower spacing than [dots]
+  smallDots('small-dots', requiresClipping: true),
+
+  /// A grid of dots with alternating rows offset by half a spacing
+  /// (isometric style)
+  isometricDots('isometric-dots', requiresClipping: true),
+
+  /// French Seyes ruling: grid squares with an extra horizontal
+  /// interline through each square
+  seyesRuled('seyes-ruled', requiresClipping: true),
+
+  /// Plus-sign crosses at grid intersections instead of full lines
+  crossGrid('cross-grid', requiresClipping: true),
+
+  /// Dashed horizontal lines
+  dashedLines('dashed-lines'),
+
+  /// Horizontal lines with a checkbox square at the left margin
+  /// of each line
+  checklist('checklist');
 
   static CanvasBackgroundPattern fromName(String? name) {
     return values.firstWhere(

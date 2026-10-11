@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// Samsung Notes-style settings section header:
+/// 13px gray semibold with 14px horizontal margins.
 class SettingsSubtitle extends StatelessWidget {
   const new({super.key, required this.subtitle});
 
@@ -9,10 +11,14 @@ class SettingsSubtitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
     return Padding(
-      padding: const .only(top: 32, left: 16, right: 16, bottom: 0),
+      padding: const .only(top: 14, left: 14, right: 14, bottom: 4),
       child: Text(
         subtitle,
-        style: TextStyle(color: colorScheme.primary, fontWeight: .w500),
+        style: TextStyle(
+          color: colorScheme.onSurfaceVariant,
+          fontSize: 13,
+          fontWeight: .w600,
+        ),
       ),
     );
   }

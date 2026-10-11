@@ -27,7 +27,7 @@ class FileManager {
 
   static final log = Logger('FileManager');
 
-  static const appRootDirectoryPrefix = 'Saber';
+  static const appRootDirectoryPrefix = 'Notes';
 
   /// This isn't final because isolates sometimes init multiple times.
   /// Realistically, this value never changes.
@@ -307,7 +307,7 @@ class FileManager {
           await SaverGallery.saveImage(
             Uint8List.fromList(bytes),
             fileName: fileName,
-            albumPath: 'Saber',
+            albumPath: 'Notes',
             skipIfExists: true,
           );
         }
@@ -407,6 +407,7 @@ class FileManager {
     syncer.uploader.enqueueRel(toPath);
 
     _renameReferences(fromPath, toPath);
+    _migrateNoteCoverColor(fromPath, toPath);
     broadcastFileWrite(FileOperationType.delete, fromPath);
     broadcastFileWrite(FileOperationType.write, toPath);
 
@@ -441,6 +442,69 @@ class FileManager {
     return toPath;
   }
 
+  /// Strips [Editor.extension] or [Editor.extensionOldJson] from a note file
+  /// path, returning the note path (without extension) used as the key in
+  /// [stows.noteColors]. Returns null if the path is not a note file
+  /// (e.g. it's an asset or preview file).
+  static String? _notePathWithoutExtension(String filePath) {
+    if (filePath.endsWith(Editor.extension)) {
+      return filePath.substring(0, filePath.length - Editor.extension.length);
+    }
+    if (filePath.endsWith(Editor.extensionOldJson)) {
+      return filePath.substring(
+        0,
+        filePath.length - Editor.extensionOldJson.length,
+      );
+    }
+    return null;
+  }
+
+  /// Moves the note's library cover color from [fromPath] to [toPath]
+  /// when a note is renamed or moved. Does nothing for asset files.
+  static void _migrateNoteCoverColor(String fromPath, String toPath) {
+    final fromNote = _notePathWithoutExtension(fromPath);
+    final toNote = _notePathWithoutExtension(toPath);
+    if (fromNote == null || toNote == null || fromNote == toNote) return;
+    final colors = Map<String, String>.from(stows.noteColors.value);
+    final color = colors.remove(fromNote);
+    if (color != null) {
+      colors[toNote] = color;
+      stows.noteColors.value = colors;
+    }
+  }
+
+  /// Removes the note's library cover color when the note is deleted.
+  /// Does nothing for asset files.
+  static void _removeNoteCoverColor(String filePath) {
+    final notePath = _notePathWithoutExtension(filePath);
+    if (notePath == null) return;
+    if (!stows.noteColors.value.containsKey(notePath)) return;
+    final colors = Map<String, String>.from(stows.noteColors.value);
+    colors.remove(notePath);
+    stows.noteColors.value = colors;
+  }
+
+  /// Migrates library cover colors for every note under [oldDirectoryPath]
+  /// to [newDirectoryPath] when a folder is renamed.
+  /// Both paths are directory paths without a trailing slash.
+  static void _migrateNoteCoverColorsInDirectory(
+    String oldDirectoryPath,
+    String newDirectoryPath,
+  ) {
+    if (oldDirectoryPath == newDirectoryPath) return;
+    final prefix = '$oldDirectoryPath/';
+    final colors = Map<String, String>.from(stows.noteColors.value);
+    var changed = false;
+    for (final key in colors.keys.toList()) {
+      if (key.startsWith(prefix)) {
+        colors['$newDirectoryPath/${key.substring(prefix.length)}'] = colors
+            .remove(key)!;
+        changed = true;
+      }
+    }
+    if (changed) stows.noteColors.value = colors;
+  }
+
   static Future deleteFile(
     String filePath, {
     bool alsoUpload = true,
@@ -455,6 +519,7 @@ class FileManager {
     if (alsoUpload) syncer.uploader.enqueueRel(filePath);
 
     _removeReferences(filePath);
+    _removeNoteCoverColor(filePath);
     broadcastFileWrite(FileOperationType.delete, filePath);
 
     if (alsoDeleteAssets && !assetFileRegex.hasMatch(filePath)) {
@@ -514,6 +579,8 @@ class FileManager {
         directoryPath.substring(0, directoryPath.lastIndexOf('/') + 1) +
         newName;
     await directory.rename(documentsDirectory + newPath);
+
+    _migrateNoteCoverColorsInDirectory(directoryPath, newPath);
 
     for (final child in children) {
       _renameReferences(directoryPath + child, newPath + child);

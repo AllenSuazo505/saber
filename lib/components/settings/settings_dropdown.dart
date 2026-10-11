@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:saber/components/settings/settings_row.dart';
 import 'package:saber/components/theming/adaptive_toggle_buttons.dart';
 import 'package:saber/components/theming/uni_icon.dart';
 import 'package:saber/pages/home/settings.dart';
@@ -67,34 +68,42 @@ class _SettingsDropdownState<T> extends State<SettingsDropdown<T>> {
     icon ??= widget.iconBuilder?.call(widget.pref.value);
     icon ??= Icons.settings;
 
+    final colorScheme = ColorScheme.of(context);
+
     return MergeSemantics(
-      child: ListTile(
-        onLongPress: () {
-          SettingsPage.showResetDialog(
-            context: context,
-            pref: widget.pref,
-            prefTitle: widget.title,
-          );
-        },
-        contentPadding: const .symmetric(vertical: 4, horizontal: 16),
-        leading: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 100),
-          child: UniIcon(icon, key: ValueKey(icon)),
-        ),
-        title: Text(
-          widget.title,
-          style: TextStyle(
-            fontSize: 18,
-            fontStyle: widget.pref.value != widget.pref.defaultValue
-                ? FontStyle.italic
-                : null,
+      child: SettingsRow(
+        child: ListTile(
+          onLongPress: () {
+            SettingsPage.showResetDialog(
+              context: context,
+              pref: widget.pref,
+              prefTitle: widget.title,
+            );
+          },
+          contentPadding: EdgeInsets.zero,
+          leading: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 100),
+            child: UniIcon(icon, key: ValueKey(icon)),
           ),
-        ),
-        subtitle: Text(
-          widget.subtitle ?? '',
-          style: const TextStyle(fontSize: 13),
-        ),
-        trailing: YaruPopupMenuButton<T>(
+          title: Text(
+            widget.title,
+            style: TextStyle(
+              fontSize: 15,
+              fontStyle: widget.pref.value != widget.pref.defaultValue
+                  ? FontStyle.italic
+                  : null,
+            ),
+          ),
+          subtitle: widget.subtitle != null && widget.subtitle!.isNotEmpty
+              ? Text(
+                  widget.subtitle!,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                )
+              : null,
+          trailing: YaruPopupMenuButton<T>(
           initialValue: widget.pref.value,
           onSelected: (value) => widget.pref.value = value,
           style:
@@ -122,6 +131,7 @@ class _SettingsDropdownState<T> extends State<SettingsDropdown<T>> {
           child: widget.options
               .firstWhere((option) => option.value == widget.pref.value)
               .widget,
+        ),
         ),
       ),
     );

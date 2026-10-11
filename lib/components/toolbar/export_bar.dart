@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:saber/components/theming/adaptive_circular_progress_indicator.dart';
+import 'package:saber/components/toolbar/samsung_panel.dart';
 import 'package:saber/i18n/strings.g.dart';
 
 class ExportBar extends StatefulWidget {
@@ -88,8 +89,8 @@ class _ExportBarState extends State<ExportBar> {
     ];
 
     return Center(
-      child: Padding(
-        padding: const .all(8),
+      child: SamsungPanel(
+        padding: const .all(10),
         child: SingleChildScrollView(
           scrollDirection: widget.axis,
           child: Flex(direction: widget.axis, children: children),

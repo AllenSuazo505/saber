@@ -20,7 +20,7 @@ class DynamicMaterialApp extends StatefulHookWidget {
     super.key,
     required this.title,
     required this.router,
-    this.defaultSwatch = Colors.yellow,
+    this.defaultSwatch = const Color(0xFFFF6B35),
   });
 
   final String title;

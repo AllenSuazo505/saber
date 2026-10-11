@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:saber/components/theming/adaptive_alert_dialog.dart';
 import 'package:saber/components/toolbar/color_option.dart';
+import 'package:saber/components/toolbar/samsung_panel.dart';
 import 'package:saber/data/extensions/color_extensions.dart';
 import 'package:saber/data/prefs.dart';
 import 'package:saber/i18n/strings.g.dart';
@@ -286,8 +287,8 @@ class _ColorBarState extends State<ColorBar> {
     ];
 
     return Center(
-      child: Padding(
-        padding: const .all(8),
+      child: SamsungPanel(
+        padding: const .all(10),
         child: SingleChildScrollView(
           scrollDirection: widget.axis,
           child: Flex(direction: widget.axis, children: children),

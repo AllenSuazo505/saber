@@ -12,5 +12,16 @@ extension CanvasBackgroundPatternLocalized on CanvasBackgroundPattern {
     .staffs => t.editor.menu.bgPatterns.staffs,
     .tablature => t.editor.menu.bgPatterns.tablature,
     .cornell => t.editor.menu.bgPatterns.cornell,
+    .wideRuled => t.editor.menu.bgPatterns.wideRuled,
+    .narrowRuled => t.editor.menu.bgPatterns.narrowRuled,
+    .largeGrid => t.editor.menu.bgPatterns.largeGrid,
+    .smallGrid => t.editor.menu.bgPatterns.smallGrid,
+    .largeDots => t.editor.menu.bgPatterns.largeDots,
+    .smallDots => t.editor.menu.bgPatterns.smallDots,
+    .isometricDots => t.editor.menu.bgPatterns.isometricDots,
+    .seyesRuled => t.editor.menu.bgPatterns.seyesRuled,
+    .crossGrid => t.editor.menu.bgPatterns.crossGrid,
+    .dashedLines => t.editor.menu.bgPatterns.dashedLines,
+    .checklist => t.editor.menu.bgPatterns.checklist,
   };
 }

@@ -64,16 +64,16 @@ class _MasonryFilesState extends State<MasonryFiles> {
       sliver: switch (stows.homeLayout.value) {
         .masonryGrid => SliverMasonryGrid.count(
           crossAxisCount: widget.crossAxisCount,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
+          mainAxisSpacing: 18,
+          crossAxisSpacing: 14,
           childCount: widget.files.length,
           itemBuilder: itemBuilder,
         ),
         .simpleGrid => SliverGrid.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: widget.crossAxisCount,
-            mainAxisSpacing: 8,
-            crossAxisSpacing: 8,
+            mainAxisSpacing: 18,
+            crossAxisSpacing: 14,
             // This aspect ratio was chosen to fit an A4 page and
             // two lines for the title.
             childAspectRatio: 0.60,

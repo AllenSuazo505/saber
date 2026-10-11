@@ -202,7 +202,7 @@ login:
     saberNcServer: Saber's Nextcloud server
     otherNcServer: Other Nextcloud server
     serverUrl: Server URL
-    loginWithSaber: Login with Saber
+    loginWithSaber: Login with Notes
     loginWithNextcloud: Login with Nextcloud
     loginFlow:
       pleaseAuthorize: Please authorize Saber to access your Nextcloud account
@@ -210,7 +210,7 @@ login:
       browserDidntOpen: Login page didn't open? Click here
   encLoginStep:
     enterEncPassword: "To protect your data, please enter your encryption password:"
-    newToSaber: New to Saber? Just enter a new encryption password.
+    newToSaber: New to Notes? Just enter a new encryption password.
     encPassword: Encryption password
     encFaqTitle: Frequently asked questions
     wrongEncPassword: Decryption failed with the provided password. Please try entering it again.
@@ -355,6 +355,17 @@ editor:
       staffs: Staffs
       tablature: Tablature
       cornell: Cornell
+      wideRuled: Wide-ruled
+      narrowRuled: Narrow-ruled
+      largeGrid: Large grid
+      smallGrid: Small grid
+      largeDots: Large dots
+      smallDots: Small dots
+      isometricDots: Isometric dots
+      seyesRuled: Seyes-ruled
+      crossGrid: Cross grid
+      dashedLines: Dashed lines
+      checklist: Checklist
   readOnlyBanner:
     title: Read-only mode
     watchingServer: You are currently watching for updates on the server. Editing is disabled in this mode.

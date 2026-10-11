@@ -1361,9 +1361,6 @@ class EditorState extends State<Editor> {
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
     final platform = Theme.of(context).platform;
-    final isToolbarVertical =
-        stows.editorToolbarAlignment.value == AxisDirection.left ||
-        stows.editorToolbarAlignment.value == AxisDirection.right;
 
     final Widget canvas = CanvasGestureDetector(
       key: _canvasGestureDetectorKey,
@@ -1409,17 +1406,20 @@ class EditorState extends State<Editor> {
           : null,
     );
 
-    final Widget toolbar = Collapsible(
-      axis: isToolbarVertical
-          ? CollapsibleAxis.horizontal
-          : CollapsibleAxis.vertical,
-      collapsed:
-          DynamicMaterialApp.isFullscreen &&
-          !stows.editorToolbarShowInFullscreen.value,
-      maintainState: true,
-      child: SafeArea(
-        bottom: stows.editorToolbarAlignment.value != AxisDirection.up,
-        child: Toolbar(
+    Widget buildToolbar(AxisDirection alignment) {
+      final isToolbarVertical =
+          alignment == AxisDirection.left || alignment == AxisDirection.right;
+      return Collapsible(
+        axis: isToolbarVertical
+            ? CollapsibleAxis.horizontal
+            : CollapsibleAxis.vertical,
+        collapsed:
+            DynamicMaterialApp.isFullscreen &&
+            !stows.editorToolbarShowInFullscreen.value,
+        maintainState: true,
+        child: SafeArea(
+          bottom: alignment != AxisDirection.up,
+          child: Toolbar(
           readOnly: coreInfo.readOnly,
           setTool: (tool) {
             if (tool is Eraser && currentTool is Eraser) {
@@ -1584,39 +1584,46 @@ class EditorState extends State<Editor> {
           exportAsPng: exportAsPng,
         ),
       ),
-    );
-
-    final Widget body;
-    if (isToolbarVertical) {
-      body = Row(
-        textDirection: stows.editorToolbarAlignment.value == AxisDirection.left
-            ? .ltr
-            : .rtl,
-        children: [
-          toolbar,
-          Expanded(
-            child: Column(
-              children: [
-                Expanded(child: canvas),
-                readonlyBanner,
-              ],
-            ),
-          ),
-        ],
-      );
-    } else {
-      body = Column(
-        verticalDirection:
-            stows.editorToolbarAlignment.value == AxisDirection.up
-            ? VerticalDirection.up
-            : VerticalDirection.down,
-        children: [
-          Expanded(child: canvas),
-          toolbar,
-          readonlyBanner,
-        ],
       );
     }
+
+    // The toolbar edge is drag-controlled now: rebuild the layout
+    // whenever the persisted alignment changes.
+    final Widget body = ValueListenableBuilder(
+      valueListenable: stows.editorToolbarAlignment,
+      builder: (context, alignment, _) {
+        final isToolbarVertical =
+            alignment == AxisDirection.left ||
+            alignment == AxisDirection.right;
+        if (isToolbarVertical) {
+          return Row(
+            textDirection: alignment == AxisDirection.left ? .ltr : .rtl,
+            children: [
+              buildToolbar(alignment),
+              Expanded(
+                child: Column(
+                  children: [
+                    Expanded(child: canvas),
+                    readonlyBanner,
+                  ],
+                ),
+              ),
+            ],
+          );
+        } else {
+          return Column(
+            verticalDirection: alignment == AxisDirection.up
+                ? VerticalDirection.up
+                : VerticalDirection.down,
+            children: [
+              Expanded(child: canvas),
+              buildToolbar(alignment),
+              readonlyBanner,
+            ],
+          );
+        }
+      },
+    );
 
     return ValueListenableBuilder(
       valueListenable: savingState,
@@ -1645,14 +1652,29 @@ class EditorState extends State<Editor> {
             ? null
             : AppBar(
                 toolbarHeight: kToolbarHeight,
+                // Samsung Notes style: flat top bar, no elevation/shadow.
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                surfaceTintColor: Colors.transparent,
+                shadowColor: Colors.transparent,
                 title: widget.customTitle != null
-                    ? Text(widget.customTitle!)
+                    ? Text(
+                        widget.customTitle!,
+                        style: const TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
                     : Form(
                         key: _filenameFormKey,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         child: TextFormField(
                           decoration: const InputDecoration(
                             border: InputBorder.none,
+                          ),
+                          style: const TextStyle(
+                            fontSize: 19,
+                            fontWeight: FontWeight.bold,
                           ),
                           controller: filenameTextEditingController,
                           onChanged: renameFile,
@@ -1666,6 +1688,11 @@ class EditorState extends State<Editor> {
                 ),
                 actions: [
                   IconButton(
+                    style: IconButton.styleFrom(
+                      fixedSize: const Size(44, 44),
+                      padding: EdgeInsets.zero,
+                      shape: const CircleBorder(),
+                    ),
                     icon: const AdaptiveIcon(
                       icon: Icons.insert_page_break,
                       cupertinoIcon: CupertinoIcons.add,
@@ -1683,6 +1710,11 @@ class EditorState extends State<Editor> {
                     }),
                   ),
                   IconButton(
+                    style: IconButton.styleFrom(
+                      fixedSize: const Size(44, 44),
+                      padding: EdgeInsets.zero,
+                      shape: const CircleBorder(),
+                    ),
                     icon: const AdaptiveIcon(
                       icon: Icons.grid_view,
                       cupertinoIcon: CupertinoIcons.rectangle_grid_2x2,
@@ -1700,6 +1732,11 @@ class EditorState extends State<Editor> {
                     },
                   ),
                   IconButton(
+                    style: IconButton.styleFrom(
+                      fixedSize: const Size(44, 44),
+                      padding: EdgeInsets.zero,
+                      shape: const CircleBorder(),
+                    ),
                     icon: const AdaptiveIcon(
                       icon: Icons.more_vert,
                       cupertinoIcon: CupertinoIcons.ellipsis_vertical,

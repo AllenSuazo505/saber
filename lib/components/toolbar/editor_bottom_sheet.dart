@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:saber/components/canvas/canvas_background_preview.dart';
 import 'package:saber/components/canvas/canvas_image_dialog.dart';
 import 'package:saber/components/canvas/inner_canvas.dart';
+import 'package:saber/components/toolbar/samsung_panel.dart';
 import 'package:saber/data/editor/editor_core_info.dart';
 import 'package:saber/data/editor/page.dart';
 import 'package:saber/data/extensions/list_extensions.dart';
@@ -68,14 +69,19 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
       pageSize.height / pageSize.width * CanvasBackgroundPreview.fixedWidth,
     );
 
-    return ScrollConfiguration(
-      behavior: ScrollConfiguration.of(context).copyWith(
-        // Enable drag scrolling on all devices (including mouse)
-        dragDevices: PointerDeviceKind.values.toSet(),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: SamsungPanel.panelColorOf(context),
+        borderRadius: const .vertical(top: .circular(20)),
       ),
-      child: Padding(
-        padding: const .symmetric(horizontal: 16),
-        child: ListView(
+      child: ScrollConfiguration(
+        behavior: ScrollConfiguration.of(context).copyWith(
+          // Enable drag scrolling on all devices (including mouse)
+          dragDevices: PointerDeviceKind.values.toSet(),
+        ),
+        child: Padding(
+          padding: const .symmetric(horizontal: 16),
+          child: ListView(
           shrinkWrap: true,
           children: [
             const SizedBox(height: 16),
@@ -338,6 +344,7 @@ class _EditorBottomSheetState extends State<EditorBottomSheet> {
           ],
         ),
       ),
+    ),
     );
   }
 }

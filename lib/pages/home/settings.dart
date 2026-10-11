@@ -87,12 +87,6 @@ abstract class _SettingsStows {
     (LayoutSize value) => value.index,
     (int value) => LayoutSize.values[value],
   );
-
-  static final editorToolbarAlignment = TransformedStow(
-    stows.editorToolbarAlignment,
-    (AxisDirection value) => value.index,
-    (int value) => AxisDirection.values[value],
-  );
 }
 
 class _SettingsPageState extends State<SettingsPage> {
@@ -123,19 +117,6 @@ class _SettingsPageState extends State<SettingsPage> {
       };
   bool get usesMaterialByDefault =>
       !usesCupertinoByDefault && !usesYaruByDefault;
-
-  static const cupertinoDirectionIcons = [
-    CupertinoIcons.arrow_up_to_line,
-    CupertinoIcons.arrow_right_to_line,
-    CupertinoIcons.arrow_down_to_line,
-    CupertinoIcons.arrow_left_to_line,
-  ];
-  static const materialDirectionIcons = [
-    Icons.north,
-    Icons.east,
-    Icons.south,
-    Icons.west,
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -420,36 +401,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
 
                 SettingsSubtitle(subtitle: t.settings.prefCategories.editor),
-                SettingsSelection(
-                  title: t.settings.prefLabels.editorToolbarAlignment,
-                  subtitle:
-                      t.settings.axisDirections[_SettingsStows
-                          .editorToolbarAlignment
-                          .value],
-                  iconBuilder: (num i) {
-                    if (i is! int || i >= materialDirectionIcons.length)
-                      return null;
-                    return cupertino
-                        ? cupertinoDirectionIcons[i]
-                        : materialDirectionIcons[i];
-                  },
-                  pref: _SettingsStows.editorToolbarAlignment,
-                  optionsWidth: 60,
-                  options: [
-                    for (final AxisDirection direction in AxisDirection.values)
-                      ToggleButtonsOption(
-                        direction.index,
-                        Icon(
-                          cupertino
-                              ? cupertinoDirectionIcons[direction.index]
-                              : materialDirectionIcons[direction.index],
-                          semanticLabel:
-                              t.settings.axisDirections[direction.index],
-                        ),
-                      ),
-                  ],
-                  afterChange: (_) => setState(() {}),
-                ),
                 SettingsSwitch(
                   title: t.settings.prefLabels.editorToolbarShowInFullscreen,
                   icon: cupertino

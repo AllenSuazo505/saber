@@ -18,8 +18,8 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.adilhanney.saber"
-    compileSdk = 37
+    namespace = "com.goldship.sabernotes"
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -28,13 +28,20 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.adilhanney.saber"
+        applicationId = "com.goldship.sabernotes"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // Slim build: only arm64-v8a (Allen's Galaxy Tab S6 Lite and phone).
+        // Cuts ~75MB of unused armeabi-v7a/x86_64 native libs so the APK
+        // downloads reliably. Revert if a non-arm64 build is ever needed.
+        ndk {
+            abiFilters.clear()
+            abiFilters.add("arm64-v8a")
+        }
     }
 
     signingConfigs {

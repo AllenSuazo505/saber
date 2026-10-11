@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:saber/components/settings/settings_row.dart';
 
 class SettingsButton extends StatelessWidget {
   const new({
@@ -16,16 +17,28 @@ class SettingsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPressed,
-      child: ListTile(
-        contentPadding: const .symmetric(vertical: 4, horizontal: 16),
-        leading: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 100),
-          child: Icon(icon, key: ValueKey(icon)),
+    final colorScheme = ColorScheme.of(context);
+    return SettingsRow(
+      child: InkWell(
+        borderRadius: .circular(14),
+        onTap: onPressed,
+        child: ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 100),
+            child: Icon(icon, key: ValueKey(icon)),
+          ),
+          title: Text(title, style: const TextStyle(fontSize: 15)),
+          subtitle: subtitle != null && subtitle!.isNotEmpty
+              ? Text(
+                  subtitle!,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                )
+              : null,
         ),
-        title: Text(title, style: const TextStyle(fontSize: 18)),
-        subtitle: Text(subtitle ?? '', style: const TextStyle(fontSize: 13)),
       ),
     );
   }

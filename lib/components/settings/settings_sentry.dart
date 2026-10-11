@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:saber/components/home/sentry_consent_dialog.dart';
+import 'package:saber/components/settings/settings_row.dart';
 import 'package:saber/data/prefs.dart';
 import 'package:saber/data/sentry/sentry_init.dart';
 import 'package:saber/i18n/strings.g.dart';
@@ -23,26 +24,36 @@ class const SettingsSentryConsent({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final title = t.settings.prefLabels.sentry;
+    final colorScheme = ColorScheme.of(context);
     return ValueListenableBuilder(
       valueListenable: stows.sentryConsent,
       builder: (context, consent, child) {
         final subtitle = _getSubtitle();
-        return ListTile(
-          contentPadding: const .symmetric(vertical: 4, horizontal: 16),
-          leading: const Icon(Icons.bug_report),
-          title: Text(
-            title,
-            style: TextStyle(
-              fontSize: 18,
-              fontStyle:
-                  stows.sentryConsent.value != stows.sentryConsent.defaultValue
-                  ? FontStyle.italic
-                  : null,
+        return SettingsRow(
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.bug_report),
+            title: Text(
+              title,
+              style: TextStyle(
+                fontSize: 15,
+                fontStyle:
+                    stows.sentryConsent.value !=
+                        stows.sentryConsent.defaultValue
+                    ? FontStyle.italic
+                    : null,
+              ),
             ),
+            subtitle: Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 13,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            onTap: () => SentryConsentDialog.show(context),
+            onLongPress: () => SentryConsentDialog.show(context),
           ),
-          subtitle: Text(subtitle, style: const TextStyle(fontSize: 13)),
-          onTap: () => SentryConsentDialog.show(context),
-          onLongPress: () => SentryConsentDialog.show(context),
         );
       },
     );

@@ -84,8 +84,8 @@ class Toolbar extends StatefulWidget {
   @override
   State<Toolbar> createState() => _ToolbarState();
 
-  static const _buttonPaddingHorizontal = EdgeInsets.symmetric(horizontal: 6);
-  static const _buttonPaddingVertical = EdgeInsets.symmetric(vertical: 6);
+  static const _buttonPaddingHorizontal = EdgeInsets.symmetric(horizontal: 4);
+  static const _buttonPaddingVertical = EdgeInsets.symmetric(vertical: 4);
 }
 
 class _ToolbarState extends State<Toolbar> {
@@ -168,6 +168,110 @@ class _ToolbarState extends State<Toolbar> {
     DynamicMaterialApp.setFullscreen(
       !DynamicMaterialApp.isFullscreen,
       updateSystem: true,
+    );
+  }
+
+  /// Nearest screen edge to [pos], used for toolbar edge-snapping.
+  AxisDirection _nearestEdge(Offset pos) {
+    final size = MediaQuery.sizeOf(context);
+    var best = AxisDirection.down;
+    var bestDistance = double.infinity;
+    void consider(AxisDirection edge, double distance) {
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        best = edge;
+      }
+    }
+
+    consider(AxisDirection.up, pos.dy);
+    consider(AxisDirection.down, size.height - pos.dy);
+    consider(AxisDirection.left, pos.dx);
+    consider(AxisDirection.right, size.width - pos.dx);
+    return best;
+  }
+
+  /// Subtle Samsung-style grip handle. Only this starts a drag —
+  /// every tool button keeps its normal tap behavior. Uses Flutter's
+  /// built-in Draggable so the floating preview is handled robustly.
+  Widget _buildDragHandle(bool isToolbarVertical, ColorScheme colorScheme) {
+    // Fixed ghost size, floating above the fingertip so it's visible.
+    const ghostWidth = 300.0;
+    const ghostHeight = 68.0;
+    const liftAboveFinger = 90.0;
+
+    Widget ghostBar() {
+      final brightness = Theme.brightnessOf(context);
+      return Container(
+        width: ghostWidth,
+        height: ghostHeight,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: brightness == .dark
+              ? const Color(0xFF252525)
+              : const Color(0xFFF2F2F4),
+          borderRadius: .circular(24),
+          border: Border.all(color: colorScheme.primary, width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.35),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: .center,
+          children: [
+            for (int i = 0; i < 5; i++)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    shape: .circle,
+                    color: colorScheme.primary.withValues(alpha: 0.25),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+
+    Widget handlePill() {
+      return Container(
+        padding: const EdgeInsets.all(10),
+        color: Colors.transparent,
+        child: Container(
+          width: isToolbarVertical ? 28 : 5,
+          height: isToolbarVertical ? 5 : 28,
+          decoration: BoxDecoration(
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.35),
+            borderRadius: .circular(3),
+          ),
+        ),
+      );
+    }
+
+    return Draggable<Object>(
+      data: null,
+      // Float the preview above the fingertip so it's visible, not hidden
+      // under the finger. The returned offset is the grab point within the
+      // feedback: feedback top-left = pointer - offset.
+      dragAnchorStrategy: (draggable, context, position) =>
+          const Offset(ghostWidth / 2, liftAboveFinger + ghostHeight / 2),
+      feedback: Material(color: Colors.transparent, child: ghostBar()),
+      childWhenDragging: Opacity(opacity: 0.4, child: handlePill()),
+      onDragEnd: (details) {
+        // details.offset is the feedback's top-left; recover the finger
+        // position and snap to the nearest screen edge.
+        final fingerPos =
+            details.offset +
+            const Offset(ghostWidth / 2, liftAboveFinger + ghostHeight / 2);
+        stows.editorToolbarAlignment.value = _nearestEdge(fingerPos);
+      },
+      child: handlePill(),
     );
   }
 
@@ -320,13 +424,29 @@ class _ToolbarState extends State<Toolbar> {
         },
       ),
       Center(
-        child: Padding(
-          padding: const .all(8),
+        child: Container(
+          // Samsung Notes style: floating rounded toolbar bar.
+          margin: const .all(12),
+          padding: const .symmetric(horizontal: 8, vertical: 8),
+          decoration: BoxDecoration(
+            color: brightness == .dark
+                ? const Color(0xFF252525)
+                : const Color(0xFFF2F2F4),
+            borderRadius: .circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.35),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
           child: Wrap(
             direction: isToolbarVertical ? Axis.vertical : Axis.horizontal,
             alignment: WrapAlignment.center,
             runSpacing: 8,
             children: [
+              _buildDragHandle(isToolbarVertical, colorScheme),
               ToolbarIconButton(
                 tooltip: Pen.currentPen.name,
                 selected: widget.currentTool == Pen.currentPen,

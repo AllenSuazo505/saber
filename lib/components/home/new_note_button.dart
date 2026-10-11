@@ -2,8 +2,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
-import 'package:saber/components/navbar/horizontal_navbar.dart';
-import 'package:saber/components/theming/saber_theme.dart';
 import 'package:saber/data/file_manager/file_manager.dart';
 import 'package:saber/data/routes.dart';
 import 'package:saber/i18n/strings.g.dart';
@@ -36,25 +34,28 @@ class _NewNoteButtonState extends State<NewNoteButton> {
           ? const CircleBorder()
           : const RoundedRectangleBorder(borderRadius: materialBorderRadius),
       dialRoot: (context, open, toggleChildren) {
-        final platform = Theme.of(context).platform;
-        return GlassyContainer(
-          height: 56,
-          borderRadius: platform.isCupertino ? null : materialBorderRadius,
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: IconButton(
-              onPressed: toggleChildren,
-              tooltip: t.home.tooltips.newNote,
-              visualDensity: VisualDensity.compact,
-              style: IconButton.styleFrom(
-                padding: .zero,
-                shape: platform.isCupertino
-                    ? const CircleBorder()
-                    : const RoundedRectangleBorder(
-                        borderRadius: materialBorderRadius,
-                      ),
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Tooltip(
+          message: t.home.tooltips.newNote,
+          child: SizedBox(
+            height: 62,
+            width: 62,
+            child: Material(
+              shape: const CircleBorder(),
+              color: isDark ? const Color(0xFF333336) : Colors.white,
+              elevation: 6,
+              shadowColor: Colors.black54,
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: toggleChildren,
+                child: const Center(
+                  child: Icon(
+                    Icons.add,
+                    color: Color(0xFFFF6B35),
+                    size: 28,
+                  ),
+                ),
               ),
-              icon: const Center(child: Icon(Icons.add)),
             ),
           ),
         );

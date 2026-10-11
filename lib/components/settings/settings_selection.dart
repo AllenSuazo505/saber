@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:saber/components/settings/settings_dropdown.dart';
+import 'package:saber/components/settings/settings_row.dart';
 import 'package:saber/components/theming/adaptive_toggle_buttons.dart';
 import 'package:saber/components/theming/uni_icon.dart';
 import 'package:saber/pages/home/settings.dart';
@@ -87,51 +88,60 @@ class _SettingsSelectionState<T extends num>
     icon ??= widget.iconBuilder?.call(widget.pref.value);
     icon ??= Icons.settings;
 
-    return ListTile(
-      onTap: () {
-        // cycle through options
-        final int i = widget.options.indexWhere(
-          (ToggleButtonsOption option) => option.value == widget.pref.value,
-        );
-        widget.pref.value =
-            widget.options[(i + 1) % widget.options.length].value;
-      },
-      onLongPress: () {
-        SettingsPage.showResetDialog(
-          context: context,
-          pref: widget.pref,
-          prefTitle: widget.title,
-        );
-      },
-      contentPadding: const .symmetric(vertical: 4, horizontal: 16),
-      leading: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 100),
-        child: UniIcon(icon, key: ValueKey(icon)),
-      ),
-      title: Text(
-        widget.title,
-        style: TextStyle(
-          fontSize: 18,
-          fontStyle: widget.pref.value != widget.pref.defaultValue
-              ? FontStyle.italic
-              : null,
-        ),
-      ),
-      subtitle: Text(
-        widget.subtitle ?? '',
-        style: const TextStyle(fontSize: 13),
-      ),
-      trailing: AdaptiveToggleButtons(
-        value: widget.pref.value,
-        options: widget.options,
-        onChange: (T? value) {
-          // setState is automatically called when the pref changes
-          if (value != null) {
-            widget.pref.value = value;
-          }
+    final colorScheme = ColorScheme.of(context);
+
+    return SettingsRow(
+      child: ListTile(
+        onTap: () {
+          // cycle through options
+          final int i = widget.options.indexWhere(
+            (ToggleButtonsOption option) => option.value == widget.pref.value,
+          );
+          widget.pref.value =
+              widget.options[(i + 1) % widget.options.length].value;
         },
-        optionsWidth: widget.optionsWidth,
-        optionsHeight: widget.optionsHeight,
+        onLongPress: () {
+          SettingsPage.showResetDialog(
+            context: context,
+            pref: widget.pref,
+            prefTitle: widget.title,
+          );
+        },
+        contentPadding: EdgeInsets.zero,
+        leading: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 100),
+          child: UniIcon(icon, key: ValueKey(icon)),
+        ),
+        title: Text(
+          widget.title,
+          style: TextStyle(
+            fontSize: 15,
+            fontStyle: widget.pref.value != widget.pref.defaultValue
+                ? FontStyle.italic
+                : null,
+          ),
+        ),
+        subtitle: widget.subtitle != null && widget.subtitle!.isNotEmpty
+            ? Text(
+                widget.subtitle!,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              )
+            : null,
+        trailing: AdaptiveToggleButtons(
+          value: widget.pref.value,
+          options: widget.options,
+          onChange: (T? value) {
+            // setState is automatically called when the pref changes
+            if (value != null) {
+              widget.pref.value = value;
+            }
+          },
+          optionsWidth: widget.optionsWidth,
+          optionsHeight: widget.optionsHeight,
+        ),
       ),
     );
   }

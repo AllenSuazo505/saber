@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// Samsung Notes (One UI) style toolbar button: a 48x48 circle.
+/// The selected tool gets a pill-colored circle; unselected tools are
+/// transparent with a flat icon color. Adapts to light/dark via Theme.
 class ToolbarIconButton extends StatelessWidget {
   const new({
     super.key,
@@ -22,34 +25,45 @@ class ToolbarIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.of(context);
-    final backgroundColor = WidgetStateProperty.resolveWith((states) {
-      if (states.contains(WidgetState.disabled) ||
-          !states.contains(WidgetState.selected)) {
-        return Colors.transparent;
-      }
-      return colorScheme.primary;
-    });
-    final foregroundColor = WidgetStateProperty.resolveWith((states) {
-      if (states.contains(WidgetState.disabled)) {
-        return colorScheme.onSurface.withValues(alpha: 0.4);
-      }
-      if (states.contains(WidgetState.selected)) {
-        return colorScheme.onPrimary;
-      }
-      return colorScheme.primary;
-    });
+    final bool isDark = Theme.brightnessOf(context) == .dark;
+
+    // One UI tokens: selected pill #4E4E50 (dark) / #E2E2E4 (light),
+    // icon color #E8E8E8 (dark) / #3A3A3C (light).
+    final Color selectedBg = isDark
+        ? const Color(0xFF4E4E50)
+        : const Color(0xFFE2E2E4);
+    final Color iconColor = isDark
+        ? const Color(0xFFE8E8E8)
+        : const Color(0xFF3A3A3C);
+
     final buttonStyle = ButtonStyle(
-      backgroundColor: backgroundColor,
-      iconColor: foregroundColor,
-      foregroundColor: foregroundColor,
+      backgroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) return Colors.transparent;
+        if (states.contains(WidgetState.selected)) return selectedBg;
+        return Colors.transparent;
+      }),
+      iconColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return colorScheme.onSurface.withValues(alpha: 0.4);
+        }
+        return iconColor;
+      }),
+      foregroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return colorScheme.onSurface.withValues(alpha: 0.4);
+        }
+        return iconColor;
+      }),
       iconSize: const WidgetStatePropertyAll(20),
-      padding: const WidgetStatePropertyAll(EdgeInsets.all(8)),
+      fixedSize: const WidgetStatePropertyAll(Size(48, 48)),
+      padding: const WidgetStatePropertyAll(EdgeInsets.zero),
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      shape: const WidgetStatePropertyAll(CircleBorder()),
     );
 
     return Padding(
       padding: padding,
-      child: IconButton.filled(
+      child: IconButton(
         style: buttonStyle,
         onPressed: (enabled) ? onPressed : null,
         tooltip: tooltip,

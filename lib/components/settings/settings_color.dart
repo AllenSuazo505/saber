@@ -2,8 +2,8 @@ import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:saber/components/settings/settings_row.dart';
 import 'package:saber/components/theming/adaptive_alert_dialog.dart';
-import 'package:saber/components/theming/adaptive_switch.dart';
 import 'package:saber/data/prefs.dart';
 import 'package:saber/i18n/strings.g.dart';
 import 'package:saber/pages/home/settings.dart';
@@ -68,60 +68,71 @@ class SettingsColor extends HookWidget {
     }, [color]);
 
     final icon = this.icon ?? iconBuilder?.call(color) ?? Icons.settings;
+    final colorScheme = ColorScheme.of(context);
 
-    return ListTile(
-      contentPadding: const .symmetric(vertical: 4, horizontal: 16),
-      leading: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 100),
-        child: Icon(icon, key: ValueKey(icon)),
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: 18,
-          fontStyle: color != pref.defaultValue ? FontStyle.italic : null,
+    return SettingsRow(
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 100),
+          child: Icon(icon, key: ValueKey(icon)),
         ),
-      ),
-      subtitle: Text(subtitle ?? '', style: const TextStyle(fontSize: 13)),
-      trailing: Row(
-        mainAxisSize: .min,
-        children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: color ?? _lastKnownColor,
-              shape: .circle,
+        title: Text(
+          title,
+          style: TextStyle(
+            fontSize: 15,
+            fontStyle: color != pref.defaultValue ? FontStyle.italic : null,
+          ),
+        ),
+        subtitle: subtitle != null && subtitle!.isNotEmpty
+            ? Text(
+                subtitle!,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              )
+            : null,
+        trailing: Row(
+          mainAxisSize: .min,
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: color ?? _lastKnownColor,
+                shape: .circle,
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          AdaptiveSwitch(
-            value: color != null && color != Colors.transparent,
-            onChanged: (value) => pref.value = value ? _lastKnownColor : null,
-          ),
-        ],
+            const SizedBox(width: 8),
+            CupertinoSwitch(
+              value: color != null && color != Colors.transparent,
+              onChanged: (value) => pref.value = value ? _lastKnownColor : null,
+            ),
+          ],
+        ),
+        onTap: () async {
+          final previousColor = color;
+          pref.value = _lastKnownColor; // enable accent color
+
+          final bool? confirmChange = await showDialog(
+            context: context,
+            builder: buildDialog,
+          );
+
+          if (confirmChange != true) {
+            // undo changes
+            pref.value = previousColor;
+          }
+        },
+        onLongPress: () {
+          SettingsPage.showResetDialog(
+            context: context,
+            pref: pref,
+            prefTitle: title,
+          );
+        },
       ),
-      onTap: () async {
-        final previousColor = color;
-        pref.value = _lastKnownColor; // enable accent color
-
-        final bool? confirmChange = await showDialog(
-          context: context,
-          builder: buildDialog,
-        );
-
-        if (confirmChange != true) {
-          // undo changes
-          pref.value = previousColor;
-        }
-      },
-      onLongPress: () {
-        SettingsPage.showResetDialog(
-          context: context,
-          pref: pref,
-          prefTitle: title,
-        );
-      },
     );
   }
 }

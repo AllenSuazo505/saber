@@ -350,6 +350,16 @@ class Stows {
     volatile: !_isOnMainIsolate,
   );
 
+  /// Cover color of each note in the library, keyed by note file path
+  /// (without extension). Values are ARGB hex strings like '#FFFFF9C4'.
+  /// Missing keys mean the default (no) color.
+  final noteColors = PlainStow<Map<String, String>>.json(
+    'noteColors',
+    <String, String>{},
+    fromJson: (json) => Map<String, String>.from(json as Map),
+    volatile: !_isOnMainIsolate,
+  );
+
   /// File paths that have been deleted locally
   final fileSyncAlreadyDeleted = PlainStow(
     'fileSyncAlreadyDeleted',
